@@ -14,12 +14,12 @@ app.use(express.json());
 // mongoDb
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.r6wv8dh.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+// console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run(){
     try{
         const serviceCollection=client.db('travelGuide').collection('services');
-        const addServiceCollection=client.db('travelGuide').collection('addServices');
+        const reviewCollection=client.db('travelGuide').collection('review');
 
         app.get('/services', async(req, res)=>{
             const query={}
@@ -41,18 +41,27 @@ async function run(){
             res.send(details);
         })
         // add service
-        // app.get('/addServices', async(req, res)=>{
-        //     const query={}
-        //     const cursor=serviceCollection.find(query);
-        //     const services=await cursor.toArray();
-        //     res.send(services);
-        // })
 
         app.post('/addServices', async(req, res)=>{
             const addService=req.body;
             const result=await serviceCollection.insertOne(addService);
             res.send(result);
         })
+        // Review
+        app.post('/review', async(req, res)=>{
+            const review=req.body;
+            const result=await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
+        app.get('/review', async(req, res)=>{
+            const query={};
+           
+            const cursor= reviewCollection.find(query);
+            const review=await cursor.toArray();
+            res.send(review);
+        })
+       
     }
     finally{
 
