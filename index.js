@@ -1,6 +1,8 @@
 const express=require('express');
 const cors =require('cors');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion,  } = require('mongodb');
+const ObjectId=require('mongodb').ObjectId
+
 require('dotenv').config();
 
 const app=express();
@@ -60,6 +62,14 @@ async function run(){
             const cursor= reviewCollection.find(query);
             const review=await cursor.toArray();
             res.send(review);
+        })
+        app.delete('/review/:id', async(req, res)=>{
+            const id=req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const result=await reviewCollection.deleteOne(query);
+            res.send(result);
+            console.log(result);
         })
        
     }
